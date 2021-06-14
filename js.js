@@ -1,4 +1,4 @@
-var numeroProductos = 6;
+var numeroProductos = 6; //Hay que sumarle +1.
 
 function sumarCantidad(posicion){
 	var valor;
@@ -30,15 +30,19 @@ function incluirCesta(posicion){
 		if(posicion==i){
 			var carrito=document.getElementById('carrito');
 			if(document.getElementById('carritoTr'+i)){
+				document.getElementById('carritoTr'+i).style.display = '';
 				document.getElementById('carritoCantidadProducto'+i).innerHTML=document.getElementById('cantidadArticulo'+i).value;
 				document.getElementById('carritoPrecioFinalProducto'+i).innerHTML=(Number(document.getElementById('precioArticulo'+i).innerHTML)*Number(document.getElementById('cantidadArticulo'+i).value)).toFixed(2);
-
+				if (Number(document.getElementById('carritoCantidadProducto'+i).innerHTML)==0){
+					document.getElementById('carritoTr'+i).style.display = 'none';
+				}
 			} else {
 				var crearTr=document.createElement('tr');
 				var crearTd1=document.createElement('td');
 				var crearTd2=document.createElement('td');
 				var crearTd3=document.createElement('td');
 				var crearTd4=document.createElement('td');
+				var crearTd5=document.createElement('td');
 				
 				crearTr.setAttribute('id', 'carritoTr'+i);
 				carrito.appendChild(crearTr);
@@ -64,20 +68,48 @@ function incluirCesta(posicion){
 				carritoTr.appendChild(crearTd4);
 				var precioFinalArticulo = document.createTextNode((Number(document.getElementById('precioArticulo'+i).innerHTML)*Number(document.getElementById('cantidadArticulo'+i).value)).toFixed(2));
 				document.getElementById('carritoPrecioFinalProducto'+i).appendChild(precioFinalArticulo);
+
+				crearTd5.setAttribute('id', 'carritoAccionProducto'+i);
+				carritoTr.appendChild(crearTd5);
+				var crearTd5Span=document.createElement('span');
+				crearTd5Span.setAttribute('class', 'btn btn-warning');
+				crearTd5Span.setAttribute('onclick', 'borrarElementoCarrito('+i+')');
+				var crearTd5SpanSpan=document.createElement('span');
+				crearTd5SpanSpan.setAttribute('class', 'glyphicon glyphicon-trash');
+				document.getElementById('carritoAccionProducto'+i).appendChild(crearTd5Span);
+				crearTd5Span.appendChild(crearTd5SpanSpan);
 			}
 
 		}
 		
 	}
-	var precioTotalCarritoActual = 0;
-	for(x=1;x<numeroProductos;x++){
-		if(document.getElementById('carritoPrecioFinalProducto'+x)){
-			var precioTotalASumar = Number(document.getElementById('carritoPrecioFinalProducto'+x).innerHTML);
-			precioTotalCarritoActual+=precioTotalASumar;
-		document.getElementById('precioTotalCarrito').innerHTML = precioTotalCarritoActual.toFixed(2);
-		}
-	}
-
+	mostrar_precioTotalCarrito();
 }
 
+function borrarCarrito(){
+	for(x=1;x<numeroProductos;x++){
+		if(document.getElementById('carritoTr'+x) && document.getElementById('carritoTr'+x).style.display != 'none'){
+			document.getElementById('carritoTr'+x).style.display = "none";
+		}
+	}
+	mostrar_precioTotalCarrito();
+}
+function borrarElementoCarrito(elemento){
+	document.getElementById('carritoTr'+elemento).style.display = "none";
+	mostrar_precioTotalCarrito();
+}
 
+function mostrar_precioTotalCarrito(){
+	var precioTotalCarritoActual = 0;
+	for(x=0;x<numeroProductos;x++){
+		if (x==0){
+			document.getElementById('precioTotalCarrito').innerHTML = 0;
+			continue;
+		}
+		if(document.getElementById('carritoPrecioFinalProducto'+x) && document.getElementById('carritoTr'+x).style.display != 'none'){
+			var precioTotalASumar = Number(document.getElementById('carritoPrecioFinalProducto'+x).innerHTML);
+			precioTotalCarritoActual+=precioTotalASumar;
+			document.getElementById('precioTotalCarrito').innerHTML = precioTotalCarritoActual.toFixed(2);
+		}
+	}
+}
